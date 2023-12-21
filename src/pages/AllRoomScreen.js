@@ -1,5 +1,5 @@
 import React from "react";
-import room_img from '../room1.jpg';
+import room_img from '../imgs/room1.jpg';
 import NavBar from "../components/NavBar";
 
 function RoomsScreen({ roomArray }) {
