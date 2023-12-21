@@ -1,0 +1,43 @@
+.all_navbar{
+  background-color:#1F6251;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap:40%
+}
+.importBtn{
+  margin-left: 2%;
+  /* font-family: Georgia, 'Times New Roman', Times, serif; */
+}
+
+.navbar{
+  color: white;
+  display: flex;
+  gap: 60%;
+  margin-top: 1%;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.component_grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 2%;
+}
+.image_item{
+  width: 337px;
+  height: 245px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+.grid_item{
+  margin: 3%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
