@@ -1,8 +1,16 @@
 import React from 'react'
 
-function RoomProfile() {
+function RoomProfile({closeModal}) {
   return (
-    <div>RoomProfile</div>
+
+    <div>
+      <div className='modalBackground'>
+        <div className='modalContainer'>
+          <p>test</p>
+          <button onClick={()=>closeModal(false)}>X</button>
+        </div>
+      </div>
+    </div>
   )
 }
 
