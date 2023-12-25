@@ -14,7 +14,7 @@ function DeviceProfile({closeModal}) {
           <img className="image_item" src={aircond_img}></img>
           <p>TLMO101</p>
           </div>
-          <button onClick={()=>closeModal(false)}>X</button>
+          <button onClick={()=>closeModal(false)} className='closeBtn'>X</button>
         </div>
 
         <EnhancedTable></EnhancedTable>

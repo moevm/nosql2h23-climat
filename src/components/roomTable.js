@@ -21,8 +21,7 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
-import NavBar from '../components/NavBar'
-import { useState, useEffect } from 'react'
+
 import data from '../imgs/room1table.json'
 
 function createData(device,type, value,time ) {
@@ -176,7 +175,7 @@ function createData(device,type, value,time ) {
             id="tableTitle"
             component="div"
           >
-            Notifications
+            State
           </Typography>
         )}
   
@@ -201,9 +200,8 @@ function createData(device,type, value,time ) {
     numSelected: PropTypes.number.isRequired,
   };
 
+export default function RoomTable() {
 
-export default function NotificationScreen() {
-  const [rooms, setRooms] = useState([]);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('device');
   const [selected, setSelected] = React.useState([]);
@@ -211,12 +209,6 @@ export default function NotificationScreen() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  useEffect(() => {
-    fetch('/notification')
-        .then((res) => res.json())
-        .then((result)=> {setRooms(result.data)})
-  },
-   []);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -281,7 +273,6 @@ export default function NotificationScreen() {
 
   return (
     <Box sx={{ width: '100%' }}>
-       <NavBar></NavBar>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -366,5 +357,4 @@ export default function NotificationScreen() {
       />
     </Box>
   );
-
 }

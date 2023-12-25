@@ -24,7 +24,6 @@ let writeClient = client.getWriteApi(org, bucket, 'ns')
 let queryClient = client.getQueryApi(org)
 
 const rooms_array =[]
-
 let fluxQueryRooms = `rooms_array = from(bucket: "clim")
 |> range(start:-2d)
 |> group()
@@ -52,10 +51,11 @@ queryClient.queryRows(fluxQueryRooms, {
   })
 
 
-let Room_query=`from(bucket: "clim")
-|> range(start:-2d)
+let Room_query=`unique_array = from(bucket: "clim")
+|> range(start: 0)
 |> group()
-|> unique(column: "_field")`
+|> unique(column: "_field")
+|> yield(name:"unique_array")`
 
 const unique_room =[]
 queryClient.queryRows(Room_query, {
@@ -67,7 +67,7 @@ queryClient.queryRows(Room_query, {
     console.error('\nError', error)
   },
   complete: () => {
-    console.log('\nSuccessful')
+    console.log('\nSuccessful rooms')
   },
 })
 
@@ -141,7 +141,7 @@ queryClient.queryRows(HumidityGraphQuery, {
     let room_data = {
       time: tableObject["_time"],
       value: tableObject["_value"],
-      device: tableObject["device_name"]
+      device: tableObject["device_name"],
     }
     graphics_hum.push(room_data)
   },
@@ -158,7 +158,7 @@ res.json({data: graphics_hum})
 })
 
 let fluxQueryTLM0101 = `from(bucket: "clim")
-  |> range(start:-2d)
+  |> range(start:-4d)
   |>unique(column: "_field")
   |> filter(fn: (r) => r["device_name"] == "TLM0101" and  r["_measurement"]=="temperature")
   |> filter(fn: (r) => r["_field"] == "Room_1" or r["_field"] == "Room_2" or r["_field"] == "Room_3" or r["_field"] == "Room_4" or r["_field"] == "Room_5")
@@ -185,4 +185,34 @@ let  device_temp_101=[]
   
   app.get('/devices/data',(req, res)=>{
   res.json(device_temp_101)
+  })
+
+let room1_devices_for_table = `from(bucket: "clim")
+  |> range(start:-4d)
+  |> filter(fn: (r) => r["_field"] == "Room_1")
+  |> unique(column: "device_name")
+  |> yield(name: "mean")`
+
+let  room1_tbl=[]
+queryClient.queryRows(room1_devices_for_table, {
+    next: (row, tableMeta,) => {
+      const tableObject = tableMeta.toObject(row)
+      let room_data = {
+        time: tableObject["_time"],
+        value: tableObject["_value"],
+        device: tableObject["device_name"],
+        type: tableObject["_measurement"]
+      }
+      room1_tbl.push(room_data)
+    },
+    error: (error) => {
+      console.error('\nError', error)
+    },
+    complete: () => {
+      console.log('\nSuccess tlmo101')
+    },
+  })
+  
+app.get('/devtable',(req, res)=>{
+  res.json(room1_tbl)
   })

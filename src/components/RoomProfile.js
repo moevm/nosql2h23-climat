@@ -11,7 +11,7 @@ import Select from '@mui/material/Select';
 import humidity_data from '../imgs/humidity_data.json'
 import co_data from '../imgs/co_data.json'
 
-import EnhancedTable from './tableStyle';
+import RoomTable from './roomTable';
 
 
 const hum_value = humidity_data.map(function (user) {
@@ -30,28 +30,15 @@ const co_device = co_data.map(function (user) {
 
 function RoomProfile({closeModal}) {
   const anchorRef = React.useRef(null);
-  let isShownCo = true;
-  let isShownHum = false;
-  // const [setWindow] = React.useState('')
   const [state_graph, setAge] = React.useState('');
+  const [showGraph, setGraph] = React.useState('Co')
 
   const handleChange = (event) => {
     // setWindow(event.target.value);
     setAge(event.target.value);
     
   };
-  function setWindow(value){
-    if(value ==='Co'){
-      console.log(value)
-      isShownCo = true;
-      isShownHum = false;
-    }
-    if(value ==='Hum'){
-      console.log(value)
-      isShownCo = false;
-      isShownHum = true;
-    }
-  }
+
   const keyToLabel = {
     TLM0100: 'TLM0100',
     TLM0101: 'TLM0101',
@@ -89,6 +76,7 @@ function RoomProfile({closeModal}) {
         <div className='modalContainer'>
           <div className='img_name'><img className="image_item" src={room_img}></img>
           <p>Room 1</p>
+          <RoomTable></RoomTable>
           </div>
           <div className='lineChartGroup'>
           <Box sx={{ minWidth: 120 }}>
@@ -101,14 +89,14 @@ function RoomProfile({closeModal}) {
                 label="Parametr"
                 onChange={handleChange}                
               >
-                <MenuItem onClick={()=>setWindow('Co')} value={'Co'}>Co</MenuItem>
-                <MenuItem onClick={()=>setWindow('Hum')} value={'Hum'}>Humidity</MenuItem>
+                <MenuItem onClick={()=>setGraph('Co')} value={'Co'}>Co</MenuItem>
+                <MenuItem onClick={()=>setGraph('Hum')} value={'Hum'}>Humidity</MenuItem>
                 <MenuItem value={'Temp'}>Temperature</MenuItem>
               </Select>
             </FormControl>
           </Box>
       
-      {isShownCo && <div className='co_graphic'>
+      {showGraph==='Co' && <div className='co_graphic'>
         <LineChart  
           xAxis={[
             {
@@ -117,6 +105,13 @@ function RoomProfile({closeModal}) {
               // valueFormatter: (v) => v.toString(),
             },
           ]}
+          // series={Object.keys(keyToLabel).map((key) => ({
+          //   dataKey: key,
+          //   label: keyToLabel[key],
+          //   color: colors[key],
+          //   showMark: false,
+          //   ...stackStrategy,
+          // }))}
           series={[
             {
               data: co_value,
@@ -128,11 +123,11 @@ function RoomProfile({closeModal}) {
           ]}
           dataset={co_data}
           {...customize}
-          width={800}
-          height={500}
+          width={600}
+          height={300}
       />
       </div>}
-      {!isShownCo &&<div className='hum_graphic'>
+      {showGraph==='Hum' &&<div className='hum_graphic'>
     <LineChart
           xAxis={[
             {
@@ -152,11 +147,11 @@ function RoomProfile({closeModal}) {
           ]}
           dataset={humidity_data}
           {...customize}
-          width={800}
-          height={500}
+          width={600}
+          height={300}
       /></div>}
-          <button className="img_name text" onClick={()=>closeModal(false)}>X</button>
-        </div>
+      </div>
+      <button className="closeBtn" onClick={()=>closeModal(false)}>X</button>
       </div>
     </div>
   </div> 
