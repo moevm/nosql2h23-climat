@@ -157,11 +157,32 @@ app.get('/rooms/gethum',(req, res)=>{
 res.json({data: graphics_hum})
 })
 
-//TMO100 table
-/*from(bucket: "clim")
+let fluxQueryTLM0101 = `from(bucket: "clim")
   |> range(start:-2d)
   |>unique(column: "_field")
-  |> filter(fn: (r) => r["device_name"] == "TLM0100" and  r["_measurement"]=="temperature")
+  |> filter(fn: (r) => r["device_name"] == "TLM0101" and  r["_measurement"]=="temperature")
   |> filter(fn: (r) => r["_field"] == "Room_1" or r["_field"] == "Room_2" or r["_field"] == "Room_3" or r["_field"] == "Room_4" or r["_field"] == "Room_5")
-  |> yield(name: "mean")
-*/
+  |> yield(name: "mean")`
+
+let  device_temp_101=[]
+  queryClient.queryRows(fluxQueryTLM0101, {
+    next: (row, tableMeta,) => {
+      const tableObject = tableMeta.toObject(row)
+      let room_data = {
+        time: tableObject["_time"],
+        value: tableObject["_value"],
+        room: tableObject["_field"]
+      }
+      device_temp_101.push(room_data)
+    },
+    error: (error) => {
+      console.error('\nError', error)
+    },
+    complete: () => {
+      console.log('\nSuccess tlmo101')
+    },
+  })
+  
+  app.get('/devices/data',(req, res)=>{
+  res.json(device_temp_101)
+  })

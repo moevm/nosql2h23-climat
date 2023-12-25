@@ -11,6 +11,8 @@ import Select from '@mui/material/Select';
 import humidity_data from '../imgs/humidity_data.json'
 import co_data from '../imgs/co_data.json'
 
+import EnhancedTable from './tableStyle';
+
 
 const hum_value = humidity_data.map(function (user) {
     return  user.value
@@ -27,17 +29,29 @@ const co_device = co_data.map(function (user) {
   });
 
 function RoomProfile({closeModal}) {
-  const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex, setGraphic] = React.useState(1);
-  const [isShown, setIsShown] = React.useState(false);
+  let isShownCo = true;
+  let isShownHum = false;
+  // const [setWindow] = React.useState('')
   const [state_graph, setAge] = React.useState('');
 
   const handleChange = (event) => {
+    // setWindow(event.target.value);
     setAge(event.target.value);
+    
   };
-
-
+  function setWindow(value){
+    if(value ==='Co'){
+      console.log(value)
+      isShownCo = true;
+      isShownHum = false;
+    }
+    if(value ==='Hum'){
+      console.log(value)
+      isShownCo = false;
+      isShownHum = true;
+    }
+  }
   const keyToLabel = {
     TLM0100: 'TLM0100',
     TLM0101: 'TLM0101',
@@ -79,21 +93,23 @@ function RoomProfile({closeModal}) {
           <div className='lineChartGroup'>
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Age</InputLabel>
+              <InputLabel id="demo-simple-select-label">Type</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={state_graph}
                 label="Parametr"
-                onChange={handleChange}
+                onChange={handleChange}                
               >
-                <MenuItem value={'Co'}>Co</MenuItem>
-                <MenuItem value={'Hum'}>Humidity</MenuItem>
+                <MenuItem onClick={()=>setWindow('Co')} value={'Co'}>Co</MenuItem>
+                <MenuItem onClick={()=>setWindow('Hum')} value={'Hum'}>Humidity</MenuItem>
                 <MenuItem value={'Temp'}>Temperature</MenuItem>
               </Select>
             </FormControl>
           </Box>
-      <LineChart className='co_graphic'
+      
+      {isShownCo && <div className='co_graphic'>
+        <LineChart  
           xAxis={[
             {
               dataKey: 'time',
@@ -115,7 +131,9 @@ function RoomProfile({closeModal}) {
           width={800}
           height={500}
       />
-    <LineChart className='hum_graphic'
+      </div>}
+      {!isShownCo &&<div className='hum_graphic'>
+    <LineChart
           xAxis={[
             {
               dataKey: 'time',
@@ -136,7 +154,7 @@ function RoomProfile({closeModal}) {
           {...customize}
           width={800}
           height={500}
-      />
+      /></div>}
           <button className="img_name text" onClick={()=>closeModal(false)}>X</button>
         </div>
       </div>
