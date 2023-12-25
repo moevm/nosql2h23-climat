@@ -216,3 +216,17 @@ queryClient.queryRows(room1_devices_for_table, {
 app.get('/devtable',(req, res)=>{
   res.json(room1_tbl)
   })
+
+
+const notifications = {
+  water: Math.floor(Math.random()*100),
+  oil: Math.floor(Math.random()*100),
+  electricity: Math.random()>0.5,
+  light:Math.random()>0.5,
+  filter:Math.random()>0.5,
+  active_detectors: Math.floor(Math.random()*40)
+}
+
+app.get('/notifications',(req,res)=>{
+  res.json(notifications)
+})

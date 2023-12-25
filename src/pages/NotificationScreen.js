@@ -25,15 +25,6 @@ import NavBar from '../components/NavBar'
 import { useState, useEffect } from 'react'
 import data from '../imgs/room1table.json'
 
-function createData(device,type, value,time ) {
-    return {
-        device,type, value,time 
-    };
-  }
-  
-  const rows = data.map(function (element) {
-      return createData(element.device, element.type,  element.value, element.time);
-  })
   
   function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -70,23 +61,12 @@ function createData(device,type, value,time ) {
       disablePadding: true,
       label: 'Device number',
     },
-    {
-      id: 'type',
-      numeric: false,
-      disablePadding: true,
-      label: 'Measurement',
-    },
+  
     {
       id: 'value',
-      numeric: true,
-      disablePadding: false,
-      label: 'Value',
-    },
-    {
-      id: 'time',
       numeric: false,
       disablePadding: false,
-      label: 'Time UTC+3',
+      label: 'Value',
     },
   ];
   
@@ -203,7 +183,8 @@ function createData(device,type, value,time ) {
 
 
 export default function NotificationScreen() {
-  const [rooms, setRooms] = useState([]);
+
+  const [rows, setRows] = useState([]);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('device');
   const [selected, setSelected] = React.useState([]);
@@ -212,12 +193,53 @@ export default function NotificationScreen() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   useEffect(() => {
-    fetch('/notification')
+    fetch('/notifications')
         .then((res) => res.json())
-        .then((result)=> {setRooms(result.data)})
+        .then((result)=> {
+          let notificat_data = []
+          console.log(result);
+          if(parseInt(result.water) <= 50) {
+            notificat_data.push({water: result.water})
+          }
+          if(parseInt(result.oil) <= 50) {
+            notificat_data.push({oil: result.oil})
+          }
+          if(parseInt(result.active_detectors) <= 50) {
+            notificat_data.push({active_detectors: result.active_detectors})
+          }
+          
+          if(result.electricity == false) {
+            notificat_data.push({electricity: result.electricity})
+          }
+          if(result.filter == false) {
+            notificat_data.push({filter: result.filter})
+          }
+          if(result.light == false) {
+            notificat_data.push({light: result.light})
+          }
+          let rowes = notificat_data.map(function (element) {
+            return createData(element);
+          })
+          console.log("rowes", rowes)
+          setRows(rowes)
+
+        })
   },
    []);
-  const handleRequestSort = (event, property) => {
+
+   function createData(element) {
+      let name = Object.keys(element)[0];
+      let value = Object.values(element)[0];
+      
+      if (value === false)
+        value = 'problem';
+      console.log("val", value)
+    return {
+        name, value
+    };
+  }
+
+   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -332,9 +354,7 @@ export default function NotificationScreen() {
                       {row.name}
                     </TableCell>
                     <TableCell align="left">{row.device}</TableCell>
-                    <TableCell align="left">{row.type}</TableCell>
                     <TableCell align="left">{row.value}</TableCell>
-                    <TableCell align="left">{row.time}</TableCell>
                   </TableRow>
                 );
               })}
