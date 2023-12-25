@@ -58,6 +58,22 @@
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   padding: 25px;
+}
+.img_name{
+  display: flex;
+  flex-direction: column;
+}
+.img_name text{
+  font-style: inherit;
+}
+
+.lineChartGroup{
+  display: flex;
+  flex-direction: column;
+  margin-left: 9%;
+  align-items: center;
+  box-shadow: none;
 }
